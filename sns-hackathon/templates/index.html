@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNS FilterHub</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══════════════ AUTH ═══════════════ -->
+<div class="auth-page" id="authPage">
+    <div class="auth-card" id="loginCard">
+        <div class="auth-logo">
+            <div class="auth-logo-mark">☁</div>
+            <h1>SNS FilterHub</h1>
+            <p>Selective Message Delivery Platform</p>
+        </div>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" id="loginEmail" placeholder="you@example.com">
+                <div class="field-error" id="loginEmailError"></div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password">
+                <div class="field-error" id="loginPasswordError"></div>
+            </div>
+            <div class="form-error" id="loginGeneralError"></div>
+            <button type="submit" class="btn-auth">Login</button>
+            <div class="auth-links">
+                <a class="link" onclick="showForgot()">Forgot Password?</a>
+                <a class="link" onclick="showSignup()">Create an account →</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="auth-card" id="signupCard" style="display:none;">
+        <div class="auth-logo">
+            <div class="auth-logo-mark">☁</div>
+            <h1>Create Account</h1>
+            <p>Sign up for SNS FilterHub</p>
+        </div>
+        <form onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="signupName" placeholder="John Doe">
+                <div class="field-error" id="signupNameError"></div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" id="signupEmail" placeholder="you@example.com">
+                <div class="field-error" id="signupEmailError"></div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signupPassword" placeholder="Min 6 characters">
+                <div class="field-error" id="signupPasswordError"></div>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirm" placeholder="Re-enter password">
+                <div class="field-error" id="signupConfirmError"></div>
+            </div>
+            <div class="form-error" id="signupGeneralError"></div>
+            <button type="submit" class="btn-auth">Create Account</button>
+            <div class="auth-links">
+                <a class="link" onclick="showLogin()">← Back to login</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="auth-card" id="forgotCard" style="display:none;">
+        <div class="auth-logo">
+            <div class="auth-logo-mark">🔑</div>
+            <h1>Reset Password</h1>
+            <p>Enter your email to receive a reset link</p>
+        </div>
+        <form onsubmit="handleForgot(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" id="forgotEmail" placeholder="you@example.com">
+                <div class="field-error" id="forgotEmailError"></div>
+            </div>
+            <button type="submit" class="btn-auth">Send Reset Link</button>
+            <div class="auth-links">
+                <a class="link" onclick="showLogin()">← Back to login</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ═══════════════ APP ═══════════════ -->
+<div class="app" id="appPage" style="display:none;">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-logo">☁</div>
+            <div class="sidebar-name">SNS FilterHub</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-item active" data-page="dashboard">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                Dashboard
+            </a>
+            <a class="nav-item" data-page="topics">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+                Topics
+            </a>
+            <a class="nav-item" data-page="subscriptions">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg>
+                Subscriptions
+            </a>
+            <a class="nav-item" data-page="simulator">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Simulator
+            </a>
+            <a class="nav-item" data-page="activity">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Activity
+            </a>
+            <a class="nav-item" data-page="analytics">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+                Analytics
+            </a>
+            <a class="nav-item" data-page="settings">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                Settings
+            </a>
+            <a class="nav-item" data-page="docs">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+                Documentation
+            </a>
+        </nav>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="userAvatarSidebar">K</div>
+            <div>
+                <div class="user-name" id="userNameSidebar">Keerthi</div>
+                <div class="user-role">Administrator</div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            <div class="topbar-right">
+                <button class="icon-btn" onclick="openNotif(event)">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                    <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+                </button>
+                <div class="profile-btn" onclick="openProfile(event)">
+                    <div class="user-avatar sm" id="userAvatarTop">K</div>
+                    <span id="userNameTop">Keerthi</span>
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+
+                <!-- NOTIFICATIONS DROPDOWN -->
+                <div class="dropdown notif-dropdown" id="notifDrop">
+                    <div class="dropdown-head">
+                        <span>Notifications</span>
+                        <a class="link" onclick="markAllRead()" style="font-size:12px;">Mark all read</a>
+                    </div>
+                    <div id="notifList" class="notif-list"></div>
+                    <div class="dropdown-foot" onclick="clearAllNotifs()">Clear All</div>
+                </div>
+
+                <!-- PROFILE DROPDOWN -->
+                <div class="dropdown" id="profileDrop">
+                    <div class="dropdown-item">Profile</div>
+                    <div class="dropdown-item">Account Settings</div>
+                    <div class="dropdown-sep"></div>
+                    <div class="dropdown-item danger" onclick="doLogout()">Logout</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- DASHBOARD -->
+            <section class="page active" id="page-dashboard">
+                <div class="page-head">
+                    <div>
+                        <h2>Selective Message Filtering</h2>
+                        <p>Deliver the right message to the right subscriber using SNS filter policies.</p>
+                    </div>
+                    <div class="page-btns">
+                        <button class="btn btn-secondary" onclick="openTopicModal()">+ Create Topic</button>
+                        <button class="btn btn-primary" onclick="goPage('simulator')">Test Message</button>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat"><div class="stat-label">Active Topics</div><div class="stat-value" id="statTopicCount">1</div><div class="stat-foot">SNS topics currently configured</div></div>
+                    <div class="stat"><div class="stat-label">Subscriptions</div><div class="stat-value">4</div><div class="stat-foot">Subscribers connected to topics</div></div>
+                    <div class="stat"><div class="stat-label">Messages Filtered</div><div class="stat-value" id="statFiltered">0</div><div class="stat-foot">Messages evaluated by policies</div></div>
+                    <div class="stat"><div class="stat-label">Delivery Rate</div><div class="stat-value" id="statRate">98.6%</div><div class="stat-foot">Successfully delivered messages</div></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head"><h3>How Selective Delivery Works</h3></div>
+                    <div class="flow">
+                        <div class="flow-box"><div class="flow-icon">👤</div><div class="flow-title">Publisher</div><div class="flow-sub">Sends a message</div></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box"><div class="flow-icon">📢</div><div class="flow-title">SNS Topic</div><div class="flow-sub">Orders</div></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box"><div class="flow-icon">🔍</div><div class="flow-title">Filter Policy</div><div class="flow-sub">Priority = HIGH</div></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box green"><div class="flow-icon">✓</div><div class="flow-title">Subscriber A</div><div class="flow-sub">MATCH · DELIVER</div></div>
+                    </div>
+                    <div class="flow-note">Messages that don't match a subscription's filter policy are not delivered to that subscriber.</div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>Recent Message Activity</h3>
+                        <a class="link" onclick="goPage('activity')">View All →</a>
+                    </div>
+                    <table class="table">
+                        <thead><tr><th>Message ID</th><th>Topic</th><th>Attributes</th><th>Subscriber</th><th>Result</th><th>Time</th></tr></thead>
+                        <tbody id="dashActivity">
+                            <tr><td colspan="6" class="empty-cell">No activity yet — try the Simulator.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TOPICS -->
+            <section class="page" id="page-topics">
+                <div class="page-head">
+                    <div>
+                        <h2>SNS Topics</h2>
+                        <p>Manage your AWS SNS topics and monitor their subscriptions.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openTopicModal()">+ Create Topic</button>
+                </div>
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>All Topics</h3>
+                        <input class="search" id="topicSearch" placeholder="🔍 Search topics..." oninput="renderTopics()">
+                    </div>
+                    <table class="table">
+                        <thead><tr><th>Topic Name</th><th>ARN</th><th>Subscriptions</th><th>Messages</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="topicsTable"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TOPIC DETAILS -->
+            <section class="page" id="page-topic-details">
+                <div class="page-head">
+                    <div>
+                        <a class="link" onclick="goPage('topics')" style="font-size:13px;">← Back to Topics</a>
+                        <h2 id="tdName" style="margin-top:8px;">Topic Name</h2>
+                        <p id="tdDesc">Topic description</p>
+                    </div>
+                    <div class="page-btns">
+                        <button class="btn btn-secondary" onclick="showToast('Subscription created.')">+ Add Subscription</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><h3>Topic Information</h3></div>
+                    <div class="panel-body">
+                        <div class="kv"><span>Topic Name</span><b id="tdInfoName">—</b></div>
+                        <div class="kv"><span>Topic ARN</span><b id="tdArn" class="mono">—</b></div>
+                        <div class="kv"><span>Topic Type</span><b id="tdType">Standard</b></div>
+                        <div class="kv"><span>Created</span><b id="tdCreated">—</b></div>
+                        <div class="kv"><span>Subscriptions</span><b id="tdSubs">0</b></div>
+                        <div class="kv"><span>Messages Published</span><b id="tdMsgs">0</b></div>
+                        <div class="kv"><span>Status</span><span class="badge active">● Active</span></div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><h3>Subscriptions for this Topic</h3></div>
+                    <table class="table">
+                        <thead><tr><th>Subscription</th><th>Protocol</th><th>Filter Policy</th><th>Status</th></tr></thead>
+                        <tbody id="tdSubTable"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SUBSCRIPTIONS -->
+            <section class="page" id="page-subscriptions">
+                <div class="page-head">
+                    <div>
+                        <h2>SNS Subscriptions</h2>
+                        <p>Manage subscribers and their message filtering policies.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('modal-sub')">+ Add Subscription</button>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><h3>All Subscriptions</h3><input class="search" placeholder="🔍 Search subscriptions..."></div>
+                    <table class="table">
+                        <thead><tr><th>Subscription</th><th>Topic</th><th>Protocol</th><th>Filter Policy</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="dot red"></span>high-value-orders-queue</td><td>order-events-topic</td><td>SQS</td><td><code>price_usd &gt; 100</code></td><td><span class="badge active">● Active</span></td></tr>
+                            <tr><td><span class="dot blue"></span>electronics-orders-queue</td><td>order-events-topic</td><td>SQS</td><td><code>category ∈ [electronics, computers]</code></td><td><span class="badge active">● Active</span></td></tr>
+                            <tr><td><span class="dot purple"></span>premium-customers-queue</td><td>order-events-topic</td><td>SQS</td><td><code>customer_tier ∈ [premium, gold]</code></td><td><span class="badge active">● Active</span></td></tr>
+                            <tr><td><span class="dot green"></span>all-orders-queue</td><td>order-events-topic</td><td>SQS</td><td><code class="muted">no filter — receives all</code></td><td><span class="badge active">● Active</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SIMULATOR -->
+            <section class="page" id="page-simulator">
+                <div class="page-head">
+                    <div><h2>Message Filter Simulator</h2><p>Test a message against your subscription filter policies.</p></div>
+                </div>
+                <div class="sim-layout">
+                    <div class="panel">
+                        <div class="panel-head"><h3>Message Details</h3></div>
+                        <div class="panel-body">
+                            <div class="form-group"><label>Topic</label><select id="simTopic"></select></div>
+                            <div class="form-group"><label>Priority</label><select id="simPriority"><option>HIGH</option><option>MEDIUM</option><option>LOW</option></select></div>
+                            <div class="form-group"><label>Region</label><select id="simRegion"><option>AP-SOUTH-1</option><option>US-EAST-1</option><option>EU-WEST-1</option></select></div>
+                            <div class="form-group"><label>Order Value (USD)</label><input id="simPrice" type="number" value="500"></div>
+                            <div class="form-group"><label>Category</label><select id="simCategory"><option>electronics</option><option>computers</option><option>books</option><option>clothing</option><option>food</option></select></div>
+                            <div class="form-group"><label>Customer Tier</label><select id="simTier"><option>basic</option><option>silver</option><option>premium</option><option>gold</option></select></div>
+                            <div class="form-group"><label>Message</label><textarea id="simBody" rows="3">New order ORD-1024 has been placed.</textarea></div>
+                            <div class="btn-row">
+                                <button class="btn btn-primary btn-grow" onclick="testFilter()">Test Filter</button>
+                                <button class="btn btn-secondary" onclick="clearSim()">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3>Filter Results</h3>
+                            <span class="results-count" id="simCount">Awaiting test</span>
+                        </div>
+                        <div class="panel-body">
+                            <div id="simResults" class="sim-results">
+                                <div class="sim-empty">Configure a message and click <b>Test Filter</b> to see results.</div>
+                            </div>
+                            <div class="sim-summary" id="simSummary" style="display:none;">
+                                <div class="summary-title"><span id="sumTotal">0</span> subscriptions evaluated</div>
+                                <div class="summary-row">
+                                    <div class="summary-item green"><div class="summary-num" id="sumDelivered">0</div><div class="summary-lbl">Delivered</div></div>
+                                    <div class="summary-item red"><div class="summary-num" id="sumFiltered">0</div><div class="summary-lbl">Filtered</div></div>
+                                </div>
+                                <div class="summary-pct" id="sumPct"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACTIVITY -->
+            <section class="page" id="page-activity">
+                <div class="page-head"><div><h2>Message Activity</h2><p>Every message evaluated by SNS filter policies.</p></div></div>
+                <div class="mini-stats">
+                    <div class="mini-stat"><div class="mini-label">Total</div><div class="mini-value" id="actTotal">0</div></div>
+                    <div class="mini-stat"><div class="mini-label">Delivered</div><div class="mini-value green" id="actDelivered">0</div></div>
+                    <div class="mini-stat"><div class="mini-label">Filtered</div><div class="mini-value red" id="actFiltered">0</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><h3>Evaluation Log</h3></div>
+                    <table class="table">
+                        <thead><tr><th>Message ID</th><th>Topic</th><th>Subscriber</th><th>Filter Policy</th><th>Result</th><th>Time</th></tr></thead>
+                        <tbody id="activityTable"><tr><td colspan="6" class="empty-cell">No messages yet.</td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ANALYTICS -->
+            <section class="page" id="page-analytics">
+                <div class="page-head"><div><h2>Analytics</h2><p>Delivery and filtering statistics.</p></div></div>
+                <div class="stats">
+                    <div class="stat"><div class="stat-label">Messages Processed</div><div class="stat-value" id="anaProcessed">0</div></div>
+                    <div class="stat"><div class="stat-label">Delivered</div><div class="stat-value green" id="anaDelivered">0</div></div>
+                    <div class="stat"><div class="stat-label">Filtered</div><div class="stat-value red" id="anaFiltered">0</div></div>
+                    <div class="stat"><div class="stat-label">Delivery Rate</div><div class="stat-value" id="anaRate">—</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><h3>Delivered vs Filtered</h3></div>
+                    <div class="panel-body">
+                        <div class="bar-chart">
+                            <div class="bar-row"><div class="bar-lbl">Delivered</div><div class="bar-track"><div class="bar-fill green" id="barDelivered" style="width:0%"></div></div><div class="bar-num" id="barDeliveredNum">0</div></div>
+                            <div class="bar-row"><div class="bar-lbl">Filtered</div><div class="bar-track"><div class="bar-fill red" id="barFiltered" style="width:0%"></div></div><div class="bar-num" id="barFilteredNum">0</div></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SETTINGS -->
+            <section class="page" id="page-settings">
+                <div class="page-head"><div><h2>Settings</h2><p>AWS configuration and notification preferences.</p></div></div>
+                <div class="panel">
+                    <div class="panel-head"><h3>AWS Configuration</h3></div>
+                    <div class="panel-body">
+                        <div class="kv"><span>AWS Region</span><b>us-east-1</b></div>
+                        <div class="kv"><span>Status</span><span class="badge active">● Connected</span></div>
+                        <div class="kv"><span>Account</span><b>5416-4581-3476</b></div>
+                        <button class="btn btn-secondary" style="margin-top:16px;">Test Connection</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><h3>Notifications</h3></div>
+                    <div class="panel-body">
+                        <div class="toggle-row"><span>Message delivery failures</span><div class="switch on"></div></div>
+                        <div class="toggle-row"><span>Subscription changes</span><div class="switch on"></div></div>
+                        <div class="toggle-row"><span>System notifications</span><div class="switch"></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DOCS -->
+            <section class="page" id="page-docs">
+                <div class="page-head"><div><h2>Documentation</h2><p>How selective message filtering works.</p></div></div>
+                <div class="panel"><div class="panel-body"><h4>What is AWS SNS?</h4><p class="doc-p">Amazon Simple Notification Service is a fully managed pub/sub messaging service. Publishers send messages to a topic, and SNS fans them out to all subscribers.</p></div></div>
+                <div class="panel"><div class="panel-body"><h4>What is Message Filtering?</h4><p class="doc-p">Each subscription can have a JSON filter policy. SNS delivers a message only to subscribers whose policy matches the message's attributes.</p></div></div>
+                <div class="panel"><div class="panel-body">
+                    <h4>Example</h4>
+                    <div class="doc-example">
+                        <div>Message: <code>Priority = HIGH, Region = AP-SOUTH-1</code></div>
+                        <div>Policy A: <code>Priority = HIGH</code> → <span class="badge active">● Delivered</span></div>
+                        <div>Policy B: <code>Priority = LOW</code> → <span class="badge failed">● Filtered</span></div>
+                    </div>
+                </div></div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal" id="modal-topic">
+    <div class="modal-box">
+        <div class="modal-head"><h3>Create SNS Topic</h3><button class="modal-x" onclick="closeModal('modal-topic')">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label>Topic Name</label><input id="newTopicName" placeholder="Enter topic name"><div class="field-error" id="newTopicError"></div></div>
+            <div class="form-group"><label>Type</label>
+                <div class="radio-row">
+                    <label><input type="radio" name="ttype" value="Standard" checked> Standard</label>
+                    <label><input type="radio" name="ttype" value="FIFO"> FIFO</label>
+                </div>
+            </div>
+            <div class="form-group"><label>Description (optional)</label><textarea id="newTopicDesc" rows="3" placeholder="Enter description"></textarea></div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-secondary" onclick="closeModal('modal-topic')">Cancel</button>
+            <button class="btn btn-primary" onclick="createTopic()">Create Topic</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal-sub">
+    <div class="modal-box">
+        <div class="modal-head"><h3>Create Subscription</h3><button class="modal-x" onclick="closeModal('modal-sub')">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label>Topic</label><select><option>order-events-topic</option></select></div>
+            <div class="form-group"><label>Protocol</label><select><option>HTTPS</option><option>SQS</option><option>Email</option><option>Lambda</option></select></div>
+            <div class="form-group"><label>Endpoint</label><input placeholder="Enter endpoint"></div>
+            <div class="form-group">
+                <label>Filter Policy</label>
+                <div class="builder-row">
+                    <input placeholder="Attribute" value="Priority">
+                    <select><option>Equals</option><option>Not equals</option></select>
+                    <input placeholder="Value" value="HIGH">
+                </div>
+                <button class="link" style="margin-top:8px;">+ Add Condition</button>
+            </div>
+            <div class="form-group"><label>Generated Policy</label><pre class="code-block">{\n  "Priority": ["HIGH"]\n}</pre></div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-secondary" onclick="closeModal('modal-sub')">Cancel</button>
+            <button class="btn btn-primary" onclick="closeModal('modal-sub'); showToast('Subscription created successfully.')">Create Subscription</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   NOTIFICATIONS
+   ═══════════════════════════════════════ */
+let notifications = [
+    { id: 1, type: "success", text: 'Topic "order-events-topic" created', time: "2 min ago", unread: true },
+    { id: 2, type: "success", text: "4 subscriptions connected", time: "3 min ago", unread: true },
+    { id: 3, type: "warning", text: "Message delivery delayed on premium queue", time: "5 min ago", unread: true }
+];
+let notifCounter = 4;
+
+function addNotification(type, text) {
+    notifications.unshift({
+        id: notifCounter++,
+        type,
+        text,
+        time: "just now",
+        unread: true
+    });
+    if (notifications.length > 20) notifications.pop();
+    renderNotifications();
+}
+
+function renderNotifications() {
+    const list = document.getElementById("notifList");
+    const badge = document.getElementById("notifBadge");
+
+    const unreadCount = notifications.filter(n => n.unread).length;
+    if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
+        badge.style.display = "flex";
+    } else {
+        badge.style.display = "none";
+    }
+
+    if (!notifications.length) {
+        list.innerHTML = '<div class="notif-empty">No notifications</div>';
+        return;
+    }
+
+    list.innerHTML = notifications.map(n => `
+        <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="markRead(${n.id})">
+            <span class="notif-dot ${n.type === 'success' ? 'ok' : n.type === 'error' ? 'err' : 'warn'}"></span>
+            <div class="notif-body">
+                <div class="notif-text">${n.text}</div>
+                <div class="notif-time">${n.time}</div>
+            </div>
+        </div>`).join("");
+}
+
+function markRead(id) {
+    const n = notifications.find(x => x.id === id);
+    if (n) n.unread = false;
+    renderNotifications();
+}
+
+function markAllRead() {
+    notifications.forEach(n => n.unread = false);
+    renderNotifications();
+    showToast("✅ All notifications marked as read");
+}
+
+function clearAllNotifs() {
+    notifications = [];
+    renderNotifications();
+    showToast("🗑️ All notifications cleared");
+}
+
+/* ═══════════════════════════════════════
+   AUTH
+   ═══════════════════════════════════════ */
+function getUsers() { try { return JSON.parse(localStorage.getItem("snsUsers") || "{}"); } catch { return {}; } }
+function saveUsers(u) { localStorage.setItem("snsUsers", JSON.stringify(u)); }
+function getCurrentUser() { try { return JSON.parse(localStorage.getItem("snsCurrentUser") || "null"); } catch { return null; } }
+function setCurrentUser(u) { localStorage.setItem("snsCurrentUser", JSON.stringify(u)); }
+function clearCurrentUser() { localStorage.removeItem("snsCurrentUser"); }
+
+function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+function showError(id, m) { const el = document.getElementById(id); if (el) el.textContent = m; }
+function clearErrors() { document.querySelectorAll(".field-error, .form-error").forEach(e => e.textContent = ""); }
+
+function handleLogin(e) {
+    e.preventDefault();
+    clearErrors();
+    const email = document.getElementById("loginEmail").value.trim();
+    const pwd = document.getElementById("loginPassword").value;
+    let err = false;
+    if (!email) { showError("loginEmailError", "Email is required"); err = true; }
+    else if (!email.includes("@")) { showError("loginEmailError", "Email must contain @"); err = true; }
+    else if (!isValidEmail(email)) { showError("loginEmailError", "Enter a valid email"); err = true; }
+    if (!pwd) { showError("loginPasswordError", "Password is required"); err = true; }
+    else if (pwd.length < 6) { showError("loginPasswordError", "Min 6 characters"); err = true; }
+    if (err) return;
+    const users = getUsers();
+    const key = email.toLowerCase();
+    if (!users[key]) { showError("loginGeneralError", "❌ Account not found. Create one first."); return; }
+    if (users[key].password !== pwd) { showError("loginGeneralError", "❌ Incorrect password."); return; }
+    const user = { name: users[key].name, email: key };
+    setCurrentUser(user);
+    enterApp(user);
+}
+
+function handleSignup(e) {
+    e.preventDefault();
+    clearErrors();
+    const name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const pwd = document.getElementById("signupPassword").value;
+    const confirm = document.getElementById("signupConfirm").value;
+    let err = false;
+    if (!name) { showError("signupNameError", "Name is required"); err = true; }
+    if (!email) { showError("signupEmailError", "Email is required"); err = true; }
+    else if (!email.includes("@")) { showError("signupEmailError", "Must contain @"); err = true; }
+    else if (!isValidEmail(email)) { showError("signupEmailError", "Invalid email"); err = true; }
+    if (!pwd) { showError("signupPasswordError", "Password required"); err = true; }
+    else if (pwd.length < 6) { showError("signupPasswordError", "Min 6 chars"); err = true; }
+    if (pwd !== confirm) { showError("signupConfirmError", "Passwords do not match"); err = true; }
+    if (err) return;
+    const users = getUsers();
+    const key = email.toLowerCase();
+    if (users[key]) { showError("signupGeneralError", "❌ Account exists."); return; }
+    users[key] = { name, password: pwd };
+    saveUsers(users);
+    const user = { name, email: key };
+    setCurrentUser(user);
+    addNotification("success", `Welcome ${name}! Account created.`);
+    showToast("✅ Account created!");
+    setTimeout(() => enterApp(user), 400);
+}
+
+function handleForgot(e) {
+    e.preventDefault();
+    clearErrors();
+    const email = document.getElementById("forgotEmail").value.trim();
+    if (!email) { showError("forgotEmailError", "Email required"); return; }
+    if (!isValidEmail(email)) { showError("forgotEmailError", "Invalid email"); return; }
+    showToast("📧 Reset link sent to " + email);
+    addNotification("success", `Password reset link sent to ${email}`);
+    setTimeout(showLogin, 800);
+}
+
+function showLogin() { document.getElementById("loginCard").style.display = "block"; document.getElementById("signupCard").style.display = "none"; document.getElementById("forgotCard").style.display = "none"; clearErrors(); }
+function showSignup() { document.getElementById("loginCard").style.display = "none"; document.getElementById("signupCard").style.display = "block"; document.getElementById("forgotCard").style.display = "none"; clearErrors(); }
+function showForgot() { document.getElementById("loginCard").style.display = "none"; document.getElementById("signupCard").style.display = "none"; document.getElementById("forgotCard").style.display = "block"; clearErrors(); }
+
+function enterApp(user) {
+    document.getElementById("authPage").style.display = "none";
+    document.getElementById("appPage").style.display = "flex";
+    const initial = (user.name || "U").charAt(0).toUpperCase();
+    document.getElementById("userAvatarSidebar").textContent = initial;
+    document.getElementById("userAvatarTop").textContent = initial;
+    document.getElementById("userNameSidebar").textContent = user.name;
+    document.getElementById("userNameTop").textContent = user.name;
+    renderNotifications();
+}
+
+function doLogout() {
+    clearCurrentUser();
+    document.getElementById("appPage").style.display = "none";
+    document.getElementById("authPage").style.display = "flex";
+    document.getElementById("loginPassword").value = "";
+    showLogin();
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    const u = getCurrentUser();
+    renderNotifications();
+    if (u) enterApp(u);
+    else document.getElementById("authPage").style.display = "flex";
+});
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════ */
+const titles = { dashboard: "Dashboard", topics: "Topics", "topic-details": "Topic Details", subscriptions: "Subscriptions", simulator: "Message Simulator", activity: "Activity", analytics: "Analytics", settings: "Settings", docs: "Documentation" };
+
+function goPage(name) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+    const pg = document.getElementById("page-" + name);
+    if (pg) pg.classList.add("active");
+    const link = document.querySelector(`.nav-item[data-page="${name}"]`);
+    if (link) link.classList.add("active");
+    document.getElementById("pageTitle").textContent = titles[name] || name;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.querySelectorAll(".nav-item").forEach(item => {
+    item.onclick = () => goPage(item.dataset.page);
+});
+
+/* ═══════════════════════════════════════
+   TOPICS
+   ═══════════════════════════════════════ */
+let topics = [{
+    id: "order-events-topic",
+    name: "order-events-topic",
+    arn: "arn:aws:sns:us-east-1:541645813476:order-events-topic",
+    type: "Standard",
+    desc: "Order events published to subscribers",
+    created: "03 Oct 2026",
+    subs: 4, msgs: 0, status: "Active"
+}];
+
+function renderTopics() {
+    const search = (document.getElementById("topicSearch")?.value || "").toLowerCase();
+    const tbody = document.getElementById("topicsTable");
+    const filtered = topics.filter(t => t.name.toLowerCase().includes(search) || t.arn.toLowerCase().includes(search));
+
+    if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-cell">${topics.length === 0 ? 'No topics yet — click <b>+ Create Topic</b>.' : 'No topics match search.'}</td></tr>`;
+        const counter = document.getElementById("statTopicCount");
+        if (counter) counter.textContent = topics.length;
+        const sel = document.getElementById("simTopic");
+        if (sel) sel.innerHTML = topics.map(t => `<option>${t.name}</option>`).join("");
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(t => `
+        <tr>
+            <td><b>${t.name}</b></td>
+            <td><code style="font-size:11px;">${t.arn}</code></td>
+            <td>${t.subs}</td>
+            <td>${t.msgs}</td>
+            <td><span class="badge active">● ${t.status}</span></td>
+            <td>
+                <a class="link" onclick="viewTopic('${t.id}')">View</a>
+                &nbsp;·&nbsp;
+                <a class="link" style="color:#ef4444;" onclick="deleteTopic('${t.id}')">Delete</a>
+            </td>
+        </tr>`).join("");
+
+    const counter = document.getElementById("statTopicCount");
+    if (counter) counter.textContent = topics.length;
+    const sel = document.getElementById("simTopic");
+    if (sel) sel.innerHTML = topics.map(t => `<option>${t.name}</option>`).join("");
+}
+
+function openTopicModal() {
+    document.getElementById("newTopicName").value = "";
+    document.getElementById("newTopicDesc").value = "";
+    document.getElementById("newTopicError").textContent = "";
+    openModal("modal-topic");
+}
+
+function createTopic() {
+    const name = document.getElementById("newTopicName").value.trim();
+    const desc = document.getElementById("newTopicDesc").value.trim();
+    const type = document.querySelector('input[name="ttype"]:checked').value;
+    if (!name) { document.getElementById("newTopicError").textContent = "Topic name is required"; return; }
+    if (!/^[a-zA-Z0-9_-]+$/.test(name)) { document.getElementById("newTopicError").textContent = "Only letters, numbers, _ and - allowed"; return; }
+    if (topics.some(t => t.name.toLowerCase() === name.toLowerCase())) { document.getElementById("newTopicError").textContent = "Topic already exists"; return; }
+
+    const arn = `arn:aws:sns:us-east-1:541645813476:${name}`;
+    topics.push({
+        id: name, name, arn, type,
+        desc: desc || "—",
+        created: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+        subs: 0, msgs: 0, status: "Active"
+    });
+
+    closeModal("modal-topic");
+    renderTopics();
+    addNotification("success", `Topic "${name}" created successfully`);
+    showToast(`✅ Topic "${name}" created`);
+}
+
+function viewTopic(id) {
+    const t = topics.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById("tdName").textContent = t.name;
+    document.getElementById("tdDesc").textContent = t.desc;
+    document.getElementById("tdInfoName").textContent = t.name;
+    document.getElementById("tdArn").textContent = t.arn;
+    document.getElementById("tdType").textContent = t.type;
+    document.getElementById("tdCreated").textContent = t.created;
+    document.getElementById("tdSubs").textContent = t.subs;
+    document.getElementById("tdMsgs").textContent = t.msgs;
+
+    const subTable = document.getElementById("tdSubTable");
+    if (t.name === "order-events-topic") {
+        subTable.innerHTML = `
+            <tr><td><span class="dot red"></span>high-value-orders-queue</td><td>SQS</td><td><code>price_usd &gt; 100</code></td><td><span class="badge active">● Active</span></td></tr>
+            <tr><td><span class="dot blue"></span>electronics-orders-queue</td><td>SQS</td><td><code>category ∈ [electronics, computers]</code></td><td><span class="badge active">● Active</span></td></tr>
+            <tr><td><span class="dot purple"></span>premium-customers-queue</td><td>SQS</td><td><code>customer_tier ∈ [premium, gold]</code></td><td><span class="badge active">● Active</span></td></tr>
+            <tr><td><span class="dot green"></span>all-orders-queue</td><td>SQS</td><td><code class="muted">no filter</code></td><td><span class="badge active">● Active</span></td></tr>`;
+    } else {
+        subTable.innerHTML = `<tr><td colspan="4" class="empty-cell">No subscriptions yet.</td></tr>`;
+    }
+    goPage("topic-details");
+}
+
+function deleteTopic(id) {
+    const t = topics.find(x => x.id === id);
+    if (!t) return;
+    if (!confirm(`Delete topic "${t.name}"?`)) return;
+    topics = topics.filter(x => x.id !== id);
+    renderTopics();
+    addNotification("warning", `Topic "${t.name}" was deleted`);
+    showToast(`🗑️ Topic deleted`);
+}
+
+/* ═══════════════════════════════════════
+   MODALS / DROPDOWNS
+   ═══════════════════════════════════════ */
+function openModal(id) { document.getElementById(id).classList.add("open"); }
+function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+
+function openNotif(e) {
+    e.stopPropagation();
+    document.getElementById("notifDrop").classList.toggle("open");
+    document.getElementById("profileDrop").classList.remove("open");
+}
+function openProfile(e) {
+    e.stopPropagation();
+    document.getElementById("profileDrop").classList.toggle("open");
+    document.getElementById("notifDrop").classList.remove("open");
+}
+document.addEventListener("click", () => {
+    document.getElementById("notifDrop").classList.remove("open");
+    document.getElementById("profileDrop").classList.remove("open");
+});
+
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+/* ═══════════════════════════════════════
+   FILTER LOGIC
+   ═══════════════════════════════════════ */
+const POLICIES = [
+    { name: "high-value-orders-queue", color: "red", rule: a => a.price_usd > 100,
+      reason: a => `price_usd ${a.price_usd} > 100`, failReason: a => `price_usd ${a.price_usd} ≤ 100` },
+    { name: "electronics-orders-queue", color: "blue", rule: a => ["electronics","computers"].includes(a.category),
+      reason: a => `category = ${a.category}`, failReason: a => `category "${a.category}" not in [electronics, computers]` },
+    { name: "premium-customers-queue", color: "purple", rule: a => ["premium","gold"].includes(a.customer_tier),
+      reason: a => `customer_tier = ${a.customer_tier}`, failReason: a => `customer_tier "${a.customer_tier}" not in [premium, gold]` },
+    { name: "all-orders-queue", color: "green", rule: () => true,
+      reason: () => "no filter — receives all", failReason: () => "" }
+];
+
+function currentAttrs() {
+    return {
+        price_usd: parseFloat(document.getElementById("simPrice").value) || 0,
+        category: document.getElementById("simCategory").value,
+        customer_tier: document.getElementById("simTier").value,
+        priority: document.getElementById("simPriority").value,
+        region: document.getElementById("simRegion").value,
+    };
+}
+
+let activity = [];
+
+function testFilter() {
+    const attrs = currentAttrs();
+    let delivered = 0, filtered = 0;
+
+    const html = POLICIES.map(p => {
+        const ok = p.rule(attrs);
+        if (ok) delivered++; else filtered++;
+        return `
+            <div class="result-row ${ok ? 'match' : 'nomatch'}">
+                <div class="result-head">
+                    <span class="dot ${p.color}"></span>
+                    <b>${p.name}</b>
+                    <span class="badge ${ok ? 'active' : 'failed'}">${ok ? '🟢 MATCHED' : '🔴 NOT MATCHED'}</span>
+                </div>
+                <div class="result-reason">${ok ? p.reason(attrs) : p.failReason(attrs)}</div>
+                <div class="result-status">${ok ? 'Message Delivered' : 'Message Filtered'}</div>
+            </div>`;
+    }).join("");
+
+    document.getElementById("simResults").innerHTML = html;
+    document.getElementById("simCount").textContent = POLICIES.length + " subscriptions evaluated";
+    document.getElementById("simSummary").style.display = "block";
+    document.getElementById("sumTotal").textContent = POLICIES.length;
+    document.getElementById("sumDelivered").textContent = delivered;
+    document.getElementById("sumFiltered").textContent = filtered;
+    document.getElementById("sumPct").textContent = (delivered / POLICIES.length * 100).toFixed(1) + "% of subscriptions matched this message.";
+
+    const msgId = "MSG-" + Math.floor(Math.random() * 9000 + 1000);
+    activity.unshift({ id: msgId, topic: document.getElementById("simTopic").value, attrs, ts: new Date().toLocaleTimeString() });
+
+    // Notification based on result
+    if (filtered > 0) {
+        addNotification("warning", `${msgId}: ${delivered} delivered, ${filtered} filtered`);
+    } else {
+        addNotification("success", `${msgId}: all 4 subscribers matched`);
+    }
+
+    renderActivity();
+    showToast("Filter test completed.");
+}
+
+function clearSim() {
+    document.getElementById("simResults").innerHTML = '<div class="sim-empty">Configure a message and click <b>Test Filter</b> to see results.</div>';
+    document.getElementById("simSummary").style.display = "none";
+    document.getElementById("simCount").textContent = "Awaiting test";
+}
+
+function renderActivity() {
+    const dash = document.getElementById("dashActivity");
+    const full = document.getElementById("activityTable");
+    if (!activity.length) return;
+
+    dash.innerHTML = activity.slice(0, 5).map(a => {
+        let d = 0;
+        POLICIES.forEach(p => { if (p.rule(a.attrs)) d++; });
+        return `<tr>
+            <td><b>${a.id}</b></td><td>${a.topic}</td>
+            <td>${a.attrs.priority}, ${a.attrs.category}</td>
+            <td>${d}/4 subscribers</td>
+            <td><span class="badge active">● ${d} Delivered</span></td>
+            <td>${a.ts}</td></tr>`;
+    }).join("");
+
+    const rows = [];
+    activity.forEach(a => {
+        POLICIES.forEach(p => {
+            const ok = p.rule(a.attrs);
+            rows.push(`<tr>
+                <td><b>${a.id}</b></td><td>${a.topic}</td>
+                <td><span class="dot ${p.color}"></span>${p.name}</td>
+                <td><code>${p.reason(a.attrs)}</code></td>
+                <td><span class="badge ${ok ? 'active' : 'failed'}">${ok ? '🟢 Delivered' : '🔴 Filtered'}</span></td>
+                <td>${a.ts}</td></tr>`);
+        });
+    });
+    full.innerHTML = rows.join("");
+
+    let total = activity.length * 4, del = 0;
+    activity.forEach(a => POLICIES.forEach(p => { if (p.rule(a.attrs)) del++; }));
+    document.getElementById("actTotal").textContent = total;
+    document.getElementById("actDelivered").textContent = del;
+    document.getElementById("actFiltered").textContent = total - del;
+    document.getElementById("statFiltered").textContent = total - del;
+    document.getElementById("anaProcessed").textContent = total;
+    document.getElementById("anaDelivered").textContent = del;
+    document.getElementById("anaFiltered").textContent = total - del;
+    document.getElementById("anaRate").textContent = total ? (del / total * 100).toFixed(1) + "%" : "—";
+
+    const max = Math.max(total, 1);
+    document.getElementById("barDelivered").style.width = (del / max * 100) + "%";
+    document.getElementById("barFiltered").style.width = ((total - del) / max * 100) + "%";
+    document.getElementById("barDeliveredNum").textContent = del;
+    document.getElementById("barFilteredNum").textContent = total - del;
+}
+
+renderTopics();
+renderNotifications();
+</script>
+</body>
+</html>
