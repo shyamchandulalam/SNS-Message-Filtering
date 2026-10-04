@@ -69,6 +69,16 @@ def seed():
             "filters": [
                 {"attribute_name": "region", "operator": "=", "attribute_value": "US"}
             ]
+        },
+        {
+            "name": "Vikram Singh",
+            "email": "vikram@example.com",
+            "password": "User@123",
+            "role": "USER",
+            "status": "ACTIVE",
+            "filters": [
+                {"attribute_name": "priority", "operator": "=", "attribute_value": "HIGH"}
+            ]
         }
     ]
 
@@ -122,6 +132,7 @@ def seed():
     print("  Priya:    priya@example.com / User@123 (Filter: customer_tier = premium)")
     print("  Arjun:    arjun@example.com / User@123 (Filter: price_usd > 100)")
     print("  Sneha:    sneha@example.com / User@123 (Filter: region = US)")
+    print("  Vikram:   vikram@example.com / User@123 (Filter: priority = HIGH)")
     print("=" * 60)
 
 if __name__ == "__main__":

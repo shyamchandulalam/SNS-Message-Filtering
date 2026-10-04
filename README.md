@@ -89,6 +89,7 @@ The login screen includes quick 1-click pills to log in as any role:
 | **Priya Sharma** | `USER` | `priya@example.com` | `User@123` | `customer_tier = premium` |
 | **Arjun Patel** | `USER` | `arjun@example.com` | `User@123` | `price_usd > 100` |
 | **Sneha Reddy** | `USER` | `sneha@example.com` | `User@123` | `region = US` |
+| **Vikram Singh** | `USER` | `vikram@example.com` | `User@123` | `priority = HIGH` |
 
 ---
 
